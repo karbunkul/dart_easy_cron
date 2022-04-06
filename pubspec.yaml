@@ -1,7 +1,7 @@
 name: easy_cron
-description: A simple command-line application.
-version: 1.0.0
-# homepage: https://www.example.com
+description: Parse cron string to schedule and generate previous or next schedule item.
+version: 0.9.0
+repository: https://github.com/karbunkul/dart_easy_cron
 
 environment:
   sdk: '>=2.16.1 <3.0.0'
