@@ -58,6 +58,7 @@ class CronSchedule extends Equatable {
     return {min, ...set};
   }
 
+  // ignore: unused_element
   Set<int> get _seconds {
     return seconds?.isNotEmpty == true ? seconds! : _defaultSet(0, 59);
   }

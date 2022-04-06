@@ -9,7 +9,9 @@ void main() {
 
 // next time
   final nextTime = schedule.next();
+  print(nextTime.time);
 
 // previous time
   final prevTime = schedule.prev();
+  print(prevTime.time);
 }
