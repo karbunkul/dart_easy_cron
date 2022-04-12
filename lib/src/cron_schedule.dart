@@ -1,6 +1,8 @@
 import 'package:easy_cron/src/cron_time.dart';
 import 'package:equatable/equatable.dart';
 
+enum _DateTimeSegment { year, month, day, hour, minute, second }
+
 class CronSchedule extends Equatable {
   final Set<int>? seconds;
   final Set<int>? minutes;
@@ -92,47 +94,33 @@ class CronSchedule extends Equatable {
       _date = _date.subtract(Duration(minutes: 1));
     }
 
-    // print(_date);
-
     while (true) {
-      if (minutes != null && _minutes.contains(_date.minute) == false) {
-        _date = _date.subtract(Duration(minutes: 1));
+      if (minutes?.isNotEmpty == true &&
+          _minutes.contains(_date.minute) == false) {
+        _date = _dec(_date, _DateTimeSegment.minute);
         continue;
       }
 
-      if (hours != null && _hours.contains(_date.hour) == false) {
-        _date = _date.subtract(Duration(hours: 1));
+      if (hours?.isNotEmpty == true && _hours.contains(_date.hour) == false) {
+        _date = _dec(_date, _DateTimeSegment.hour);
         continue;
       }
 
-      if (daysOfMonth != null && _daysOfMonth.contains(_date.day) == false) {
-        _date = _date.subtract(Duration(days: 1));
+      if (daysOfMonth?.isNotEmpty == true &&
+          _daysOfMonth.contains(_date.day) == false) {
+        _date = _dec(_date, _DateTimeSegment.day);
         continue;
       }
 
-      if (daysOfWeek != null && _daysOfWeek.contains(_date.weekday) == false) {
-        _date = _date.subtract(Duration(days: 1));
-        // _date = DateTime(
-        //   _date.year,
-        //   _date.month,
-        //   _date.day - 1,
-        //   _date.hour,
-        //   _date.minute,
-        //   _date.second,
-        // );
+      if (daysOfWeek?.isNotEmpty == true &&
+          _daysOfWeek.contains(_date.weekday) == false) {
+        _date = _dec(_date, _DateTimeSegment.day);
         continue;
       }
 
-      if (months != null && _months.contains(_date.month) == false) {
-        _date = _date.subtract(Duration(days: 1));
-        // _date = DateTime(
-        //   _date.year,
-        //   _date.month - 1,
-        //   _date.day,
-        //   _date.hour,
-        //   _date.minute,
-        //   // _date.second,
-        // );
+      if (months?.isNotEmpty == true &&
+          _months.contains(_date.month) == false) {
+        _date = _dec(_date, _DateTimeSegment.day);
         continue;
       }
 
@@ -150,39 +138,92 @@ class CronSchedule extends Equatable {
     }
 
     while (true) {
-      if (months != null && _months.contains(_date.month) == false) {
-        _date = DateTime(_date.year, _date.month + 1, 1);
+      if (months?.isNotEmpty == true &&
+          _months.contains(_date.month) == false) {
+        _date = _inc(_date, _DateTimeSegment.month);
         continue;
       }
 
-      if (daysOfWeek != null && _daysOfWeek.contains(_date.weekday) == false) {
-        _date = DateTime(_date.year, _date.month, _date.day + 1);
+      if (daysOfWeek?.isNotEmpty == true &&
+          _daysOfWeek.contains(_date.weekday) == false) {
+        _date = _inc(_date, _DateTimeSegment.day);
         continue;
       }
 
-      if (daysOfMonth != null && _daysOfMonth.contains(_date.day) == false) {
-        _date = DateTime(
-          _date.year,
-          _date.month,
-          _date.day + 1,
-          _date.hour,
-          _date.minute,
-          _date.second,
-        );
+      if (daysOfMonth?.isNotEmpty == true &&
+          _daysOfMonth.contains(_date.day) == false) {
+        _date = _inc(_date, _DateTimeSegment.day);
         continue;
       }
 
-      if (hours != null && _hours.contains(_date.hour) == false) {
-        _date = _date.add(Duration(hours: 1));
+      if (hours?.isNotEmpty == true && _hours.contains(_date.hour) == false) {
+        _date = _inc(_date, _DateTimeSegment.hour);
         continue;
       }
 
-      if (minutes != null && _minutes.contains(_date.minute) == false) {
-        _date = _date.add(Duration(minutes: 1));
+      if (minutes?.isNotEmpty == true &&
+          _minutes.contains(_date.minute) == false) {
+        _date = _inc(_date, _DateTimeSegment.minute);
         continue;
       }
 
       return CronTime(time: _date, schedule: this);
+    }
+  }
+
+  DateTime _inc(DateTime date, _DateTimeSegment segment) {
+    switch (segment) {
+      case _DateTimeSegment.year:
+        return DateTime(date.year + 1);
+      case _DateTimeSegment.month:
+        return DateTime(date.year, date.month + 1);
+      case _DateTimeSegment.day:
+        return DateTime(
+          date.year,
+          date.month,
+          date.day + 1,
+        );
+      case _DateTimeSegment.hour:
+        return DateTime(
+          date.year,
+          date.month,
+          date.day,
+          date.hour + 1,
+        );
+      case _DateTimeSegment.minute:
+        return DateTime(
+          date.year,
+          date.month,
+          date.day,
+          date.hour,
+          date.minute + 1,
+        );
+      case _DateTimeSegment.second:
+        return DateTime(
+          date.year,
+          date.month,
+          date.day,
+          date.hour,
+          date.minute,
+          date.second + 1,
+        );
+    }
+  }
+
+  DateTime _dec(DateTime date, _DateTimeSegment segment) {
+    switch (segment) {
+      case _DateTimeSegment.year:
+        return DateTime(date.year - 1);
+      case _DateTimeSegment.month:
+        return date.subtract(Duration(days: 1));
+      case _DateTimeSegment.day:
+        return date.subtract(Duration(days: 1));
+      case _DateTimeSegment.hour:
+        return date.subtract(Duration(hours: 1));
+      case _DateTimeSegment.minute:
+        return date.subtract(Duration(minutes: 1));
+      case _DateTimeSegment.second:
+        return date.subtract(Duration(seconds: 1));
     }
   }
 }

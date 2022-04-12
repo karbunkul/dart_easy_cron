@@ -7,7 +7,8 @@ enum _ParserType { range, constraint, step, value }
 class UnixCronParser implements CronParserInterface {
   @override
   CronSchedule parse(String cron) {
-    final fields = cron.toLowerCase().trim().split(' ');
+    final fields = _presets(cron).toLowerCase().trim().split(' ');
+
     assert(
       fields.length == 5,
       'The cron format must be have five time and date fields separated by at '
@@ -29,6 +30,28 @@ class UnixCronParser implements CronParserInterface {
       months: months,
       daysOfWeek: dow,
     );
+  }
+
+  /// non-standard shorthands
+  String _presets(String cron) {
+    if (cron.contains('@')) {
+      final presets = {
+        'yearly': '0 0 1 1 *',
+        'annually': '0 0 1 1 *',
+        'monthly': '0 0 1 * *',
+        'weekly': '0 0 * * sun',
+        'daily': '0 0 * * *',
+        'hourly': '0 */1 * * *',
+      };
+
+      final preset = cron.substring(1);
+      if (!presets.containsKey(preset)) {
+        throw ArgumentError();
+      }
+      return presets[preset]!;
+    }
+
+    return cron;
   }
 
   String _normalize(String field, Map<String, int> dictionary) {
