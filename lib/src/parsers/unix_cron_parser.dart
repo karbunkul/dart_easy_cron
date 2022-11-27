@@ -155,11 +155,16 @@ class UnixCronParser implements CronParserInterface {
 
   Set<int> _parseRange(String part, int min, int max) {
     final ranges = part.split('-');
-    int lower = int.parse(ranges.first);
-    int higher = int.parse(ranges.last);
-    assert(lower < higher && lower >= min && higher <= max);
+    int from = int.parse(ranges.first);
+    int to = int.parse(ranges.last);
 
-    return List.generate(higher - lower + 1, (i) => i + lower).toSet();
+    if (max == 7 && to == 0) {
+      to = 7;
+    }
+
+    assert(from < to && from >= min && to <= max);
+
+    return List.generate(to - from + 1, (i) => i + from).toSet();
   }
 
   Set<int> _parseConstraint(String part, int min, int max) {

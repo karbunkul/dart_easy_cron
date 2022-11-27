@@ -1,6 +1,6 @@
 name: easy_cron
 description: Parse cron string to schedule and generate previous or next schedule item.
-version: 0.9.1
+version: 0.9.2
 repository: https://github.com/karbunkul/dart_easy_cron
 
 environment:

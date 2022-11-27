@@ -116,6 +116,21 @@ void main() {
       next('0 0 29 2 *', startAt: "2022-04-12 15:54"),
       equals('2024-02-29 00:00:00'),
     );
+
+    expect(
+      schedule('0 22 * * SAT-SUN').daysOfWeek,
+      equals({DateTime.saturday, DateTime.sunday}),
+    );
+
+    expect(
+      next('0 22 * * SAT-SUN', startAt: "2022-11-24 16:00"),
+      equals('2022-11-26 22:00:00'),
+    );
+
+    expect(
+      next('0 22 * * 6-7', startAt: "2022-11-26 23:00"),
+      equals('2022-11-27 22:00:00'),
+    );
   });
 
   test('prev method', () {
