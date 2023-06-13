@@ -88,8 +88,8 @@ class UnixCronParser implements CronParserInterface {
       'aug': 8,
       'sep': 9,
       'oct': 10,
-      'nov': 12,
-      'dec': 11,
+      'nov': 11,
+      'dec': 12,
     };
   }
 
